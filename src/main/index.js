@@ -1,11 +1,12 @@
-import React from 'react'
+import React from "react";
+import { Route } from "react-router-dom";
+import { FilmList } from "../components";
 import { fetchTemplate } from "../fetch";
-import { IMAGE_PATH } from '../consts'
 
 export default class Main extends React.Component {
   state = {
     loading: true
-  }
+  };
 
   componentDidMount() {
     fetchTemplate("/trending/movie/week").then(({ results }) =>
@@ -13,23 +14,15 @@ export default class Main extends React.Component {
     );
   }
 
-  renderList = (data = []) => {
-    return (
-      <ul class="list">
-        {data.map(({title, poster_path}) => (<li className="list__item">
-          <div className="card">
-            <img src={`${IMAGE_PATH}${poster_path}`} alt={`${title} poster`} className="card__image"/>
-            <h2 className="card__title">{title}</h2>
-          </div>
-        </li>))}
-      </ul>
-    )
-  }
-
   render() {
-    const {loading, trends} = this.state
-    return (<main className="wrapper">
-      {loading ? 'Loading...' : this.renderList(trends)}
-    </main>);
+    const { loading, trends } = this.state;
+    return (
+      <main className="wrapper">
+        <Route path="/popular" render={
+          () => loading ? 'Loading...' : <FilmList films={trends} />
+        } />
+        <Route path="/film/:filmId" />
+      </main>
+    );
   }
 }
